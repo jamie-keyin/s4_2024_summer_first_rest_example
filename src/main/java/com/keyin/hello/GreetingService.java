@@ -1,64 +1,74 @@
 package com.keyin.hello;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class GreetingService {
-    private Map<Integer, Greeting> greetingMap = new HashMap<Integer, Greeting>();
+    @Autowired
+    private GreetingRepository greetingRepository;
 
-    public Greeting getGreeting(Integer index) {
-        return greetingMap.get(index);
+    @Autowired
+    private LanguageRepository languageRepository;
+
+    public Greeting getGreeting(long index) {
+        Optional<Greeting> result = greetingRepository.findById(index);
+
+        if (result.isPresent()) {
+            return result.get();
+        }
+
+        return null;
     }
 
     public Greeting createGreeting(Greeting newGreeting) {
         if (newGreeting.getLanguages() == null) {
+            Language english = languageRepository.findByName("English");
+
+            if (english == null) {
+                english = new Language();
+                languageRepository.save(english);
+            }
+
             ArrayList<Language> languageArrayList = new ArrayList<Language>();
-            languageArrayList.add(new Language());
+            languageArrayList.add(english);
 
             newGreeting.setLanguages(languageArrayList);
+        } else {
+            for (Language language : newGreeting.getLanguages()) {
+                Language langInDB = languageRepository.findByName(language.getName());
+
+                if (langInDB == null) {
+                    language = languageRepository.save(language);
+                }
+            }
         }
 
-        greetingMap.put(greetingMap.size() + 1, newGreeting);
-
-        return newGreeting;
+        return greetingRepository.save(newGreeting);
     }
 
     public List<Greeting> getAllGreetings() {
-        return List.copyOf(greetingMap.values());
+        return (List<Greeting>) greetingRepository.findAll();
     }
 
     public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
-        Greeting greetingToUpdate = greetingMap.get(index);
+        Greeting greetingToUpdate = getGreeting(index);
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
         greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
 
-        greetingMap.put(index, greetingToUpdate);
-
-        return greetingToUpdate;
+        return greetingRepository.save(greetingToUpdate);
     }
 
-    public void deleteGreeting(Integer index) {
-        greetingMap.remove(index);
+    public void deleteGreeting(long index) {
+        greetingRepository.delete(getGreeting(index));
     }
 
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
-        List<Greeting> greetingsFound = new ArrayList<Greeting>();
-
-        for (Greeting greeting : greetingMap.values()) {
-            if (greeting.getName().equalsIgnoreCase(name) &&
-                    greeting.getGreeting().equalsIgnoreCase(greetingName)) {
-                greetingsFound.add(greeting);
-            }
-        }
-
-        return greetingsFound;
+        return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
 }
