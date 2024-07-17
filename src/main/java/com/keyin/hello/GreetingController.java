@@ -34,7 +34,7 @@ public class GreetingController {
     }
 
     @PutMapping("greeting/{index}")
-    public Greeting updateGreeting(@PathVariable Integer index, @RequestBody Greeting updatedGreeting) {
+    public Greeting updateGreeting(@PathVariable long index, @RequestBody Greeting updatedGreeting) {
         return greetingService.updateGreeting(index, updatedGreeting);
     }
 
