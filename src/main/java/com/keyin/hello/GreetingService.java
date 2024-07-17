@@ -38,15 +38,19 @@ public class GreetingService {
 
             newGreeting.setLanguages(languageArrayList);
         } else {
+            List<Language> updatedLanguages = new ArrayList<>();
             for (Language language : newGreeting.getLanguages()) {
                 Language langInDB = languageRepository.findByName(language.getName());
 
                 if (langInDB == null) {
-                    language = languageRepository.save(language);
+                    languageRepository.save(language);
+                    updatedLanguages.add(language);
+                } else {
+                    updatedLanguages.add(langInDB);
                 }
             }
+            newGreeting.setLanguages(updatedLanguages);
         }
-
         return greetingRepository.save(newGreeting);
     }
 
