@@ -14,6 +14,7 @@ public class GreetingService {
     @Autowired
     private LanguageRepository languageRepository;
 
+
     public Greeting getGreeting(long index) {
         Optional<Greeting> result = greetingRepository.findById(index);
 
@@ -57,11 +58,38 @@ public class GreetingService {
     public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
         Greeting greetingToUpdate = getGreeting(index);
 
-        greetingToUpdate.setName(updatedGreeting.getName());
-        greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+        if (greetingToUpdate != null) {
+            greetingToUpdate.setName(updatedGreeting.getName());
+            greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
 
-        return greetingRepository.save(greetingToUpdate);
+            List<Language> updatedLanguages = updatedGreeting.getLanguages();
+            List<Language> existingLanguages = greetingToUpdate.getLanguages();
+
+            if (updatedLanguages != null) {
+                for (Language updatedLanguage : updatedLanguages) {
+                    boolean languageExists = false;
+
+                    for (Language existingLanguage : existingLanguages) {
+                        if (existingLanguage.getName().equals(updatedLanguage.getName())) {
+                            languageExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!languageExists) {
+                        Language newLanguage = languageRepository.findByName(updatedLanguage.getName());
+                        if (newLanguage == null) {
+                            newLanguage = languageRepository.save(updatedLanguage);
+                        }
+                        existingLanguages.add(newLanguage);
+                    }
+                }
+            }
+
+            return greetingRepository.save(greetingToUpdate);
+        }
+
+        return null;
     }
 
     public void deleteGreeting(long index) {
