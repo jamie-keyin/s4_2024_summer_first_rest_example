@@ -39,7 +39,7 @@ public class GreetingController {
     }
 
     @DeleteMapping("greeting/{index}")
-    public void deleteGreeting(@PathVariable Integer index) {
-        greetingService.deleteGreeting(index);
+    public Greeting deleteGreeting(@PathVariable Integer index) {
+         return greetingService.deleteGreeting(index);
     }
 }
