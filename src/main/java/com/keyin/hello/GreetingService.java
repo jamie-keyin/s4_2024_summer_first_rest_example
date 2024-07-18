@@ -56,13 +56,23 @@ public class GreetingService {
 
 
     public Greeting updateGreeting(long index, Greeting updatedGreeting) {
-        Greeting updatingGreeting = getGreeting(index);
+        // Check for greeting
+        Optional<Greeting> existingGreetingOptional = greetingRepository.findById(index);
+        Greeting updatingGreeting;
 
-        // Update basic fields
+        if (existingGreetingOptional.isPresent()) {
+            updatingGreeting = existingGreetingOptional.get();
+        } else {
+            // If it doesnt exist - create it
+            updatingGreeting = new Greeting();
+            updatingGreeting.setId(index); // new ID
+        }
+
+        // Updating basic fields
         updatingGreeting.setName(updatedGreeting.getName());
         updatingGreeting.setGreeting(updatedGreeting.getGreeting());
 
-        // Update languages
+        // Updating languages
         List<Language> updatedLanguagesList = new ArrayList<>();
 
         for (Language language : updatedGreeting.getLanguages()) {
@@ -76,7 +86,6 @@ public class GreetingService {
 
         return greetingRepository.save(updatingGreeting);
     }
-
 
 
     public void deleteGreeting(long index) {
