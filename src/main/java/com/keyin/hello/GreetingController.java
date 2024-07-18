@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 @CrossOrigin
 public class GreetingController {
     @Autowired
@@ -31,6 +32,11 @@ public class GreetingController {
     @PostMapping("greeting")
     public Greeting createGreeting(@RequestBody Greeting newGreeting) {
         return greetingService.createGreeting(newGreeting);
+    }
+
+    @PutMapping("/languages")
+    public Language addNewLanguage(@RequestBody String languageName) {
+        return greetingService.addNewLanguage(languageName);
     }
 
     @PutMapping("greeting/{index}")
