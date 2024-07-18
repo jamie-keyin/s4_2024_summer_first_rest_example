@@ -59,7 +59,7 @@ public class GreetingService {
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+        greetingToUpdate.setLanguages(findOrCreateLanguage(updatedGreeting.getLanguages()));
 
         return greetingRepository.save(greetingToUpdate);
     }
@@ -70,5 +70,22 @@ public class GreetingService {
 
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
+    }
+
+    /**
+     * Takes a list of languages and finds the corresponding database language or
+     * creates a new one if not found.
+     */
+    private List<Language> findOrCreateLanguage(List<Language> languages) {
+        List<Language> newLanguages = new ArrayList<>();
+        for (Language language : languages) {
+            String name = language.getName();
+            language = languageRepository.findByName(name);
+            if (language == null) {
+                language = languageRepository.save(new Language(name));
+            }
+            newLanguages.add(language);
+        }
+        return newLanguages;
     }
 }
