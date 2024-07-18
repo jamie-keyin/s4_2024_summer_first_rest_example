@@ -1,0 +1,9 @@
+spring.jpa.hibernate.ddl-auto = update
+spring.datasource.url = jdbc:
+spring.datasource.username = 
+spring.datasource.password = 
+spring.datasource.driver-class-name = 
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.
+spring.jpa.show-sql = 
+spring.jpa.open-in-view = 
+spring.autoconfigure.exclude = org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
