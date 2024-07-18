@@ -54,15 +54,30 @@ public class GreetingService {
         return (List<Greeting>) greetingRepository.findAll();
     }
 
-    public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
-        Greeting greetingToUpdate = getGreeting(index);
 
-        greetingToUpdate.setName(updatedGreeting.getName());
-        greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+    public Greeting updateGreeting(long index, Greeting updatedGreeting) {
+        Greeting updatingGreeting = getGreeting(index);
 
-        return greetingRepository.save(greetingToUpdate);
+        // Update basic fields
+        updatingGreeting.setName(updatedGreeting.getName());
+        updatingGreeting.setGreeting(updatedGreeting.getGreeting());
+
+        // Update languages
+        List<Language> updatedLanguagesList = new ArrayList<>();
+
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language presentLanguage = languageRepository.findByName(language.getName());
+            if (presentLanguage == null) {
+                presentLanguage = languageRepository.save(language);
+            }
+            updatedLanguagesList.add(presentLanguage);
+        }
+        updatingGreeting.setLanguages(updatedLanguagesList);
+
+        return greetingRepository.save(updatingGreeting);
     }
+
+
 
     public void deleteGreeting(long index) {
         greetingRepository.delete(getGreeting(index));
@@ -71,4 +86,5 @@ public class GreetingService {
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
+
 }
