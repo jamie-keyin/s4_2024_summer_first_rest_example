@@ -1,4 +1,4 @@
-//GreetingController Mohamed 
+//GreetingController Mohamed
 package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
