@@ -1,3 +1,4 @@
+//GreetingService Mohamed
 package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,16 @@ public class GreetingService {
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+
+        List<Language> languages = new ArrayList<>();
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language langInDB = languageRepository.findByName(language.getName());
+            if (langInDB == null) {
+                langInDB = languageRepository.save(language);
+            }
+            languages.add(langInDB);
+        }
+        greetingToUpdate.setLanguages(languages);
 
         return greetingRepository.save(greetingToUpdate);
     }

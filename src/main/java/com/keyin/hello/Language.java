@@ -1,3 +1,4 @@
+//Language file Mohamed
 package com.keyin.hello;
 
 import jakarta.persistence.Entity;
@@ -9,7 +10,7 @@ import jakarta.persistence.SequenceGenerator;
 public class Language {
 
     @Id
-    @SequenceGenerator(name = "language_sequence", sequenceName = "language_sequence", allocationSize = 1, initialValue=1)
+    @SequenceGenerator(name = "language_sequence", sequenceName = "language_sequence", allocationSize = 1, initialValue = 1)
     @GeneratedValue(generator = "language_sequence")
     private long id;
     private String name;
