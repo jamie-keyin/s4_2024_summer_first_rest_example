@@ -20,7 +20,6 @@ public class GreetingService {
         if (result.isPresent()) {
             return result.get();
         }
-
         return null;
     }
 
@@ -32,21 +31,21 @@ public class GreetingService {
                 english = new Language();
                 languageRepository.save(english);
             }
-
-            ArrayList<Language> languageArrayList = new ArrayList<Language>();
+            ArrayList<Language> languageArrayList = new ArrayList<>();
             languageArrayList.add(english);
-
             newGreeting.setLanguages(languageArrayList);
         } else {
+            ArrayList<Language> languageArrayList = new ArrayList<>();
             for (Language language : newGreeting.getLanguages()) {
                 Language langInDB = languageRepository.findByName(language.getName());
 
                 if (langInDB == null) {
                     language = languageRepository.save(language);
                 }
+                languageArrayList.add(langInDB);
             }
+            newGreeting.setLanguages(languageArrayList);
         }
-
         return greetingRepository.save(newGreeting);
     }
 
