@@ -14,8 +14,8 @@ public class GreetingController {
     private GreetingService greetingService;
 
     @GetMapping("search_greeting")
-    public List<Greeting> searchGreeting(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "greeting", required = false) String greeting) {
-        return greetingService.findGreetingsByNameAndGreeting(name, greeting);
+    public Greeting searchGreeting(@RequestParam(value = "name") String name, @RequestParam(value = "greeting") String greeting) {
+        return greetingService.findGreetingByNameAndGreeting(name, greeting);
     }
 
     @GetMapping("greetings")
