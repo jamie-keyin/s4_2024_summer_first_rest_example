@@ -57,9 +57,33 @@ public class GreetingService {
     public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
         Greeting greetingToUpdate = getGreeting(index);
 
-        greetingToUpdate.setName(updatedGreeting.getName());
-        greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+        /* If greetingToUpdate is not null, indicates that a valid Greeting was found for updating, if it passes it
+         * updates name and greeting fields to the greetingToUpdate method with values from this method.*/
+        /* If the Greeting does not exist, create a new one and initialize a list of languages */
+        if (greetingToUpdate == null) {
+            greetingToUpdate = new Greeting();
+            greetingToUpdate.setName(updatedGreeting.getName());
+            greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
+            greetingToUpdate.setLanguages(new ArrayList<>()); // Initialize languages list
+        }
+
+        /* Checks to see if updatedLanguages isn't null, if it is, no languages to update.
+         *  Uses a stream to check all languages within current languages ignoring case differences.
+         * If updated language isn't found in current languages it is added. */
+
+        List<Language> updatedLanguages = updatedGreeting.getLanguages();
+        List<Language> currLanguages = greetingToUpdate.getLanguages();
+        if (updatedLanguages != null) {
+            for (Language updatedLanguage : updatedLanguages) {
+                boolean languageExists = currLanguages.stream()
+                        .anyMatch(l -> l.getName().equalsIgnoreCase(updatedLanguage.getName()));
+                if (!languageExists) {
+                    currLanguages.add(updatedLanguage);
+                }
+            }
+        }
+        greetingToUpdate.setLanguages(currLanguages);
+
 
         return greetingRepository.save(greetingToUpdate);
     }
