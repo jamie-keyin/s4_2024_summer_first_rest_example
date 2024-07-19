@@ -14,6 +14,16 @@ public class GreetingService {
     @Autowired
     private LanguageRepository languageRepository;
 
+    public Language addNewLanguage(String languageName) {
+        Language existingLanguage = languageRepository.findByName(languageName);
+        if (existingLanguage == null) {
+            Language newLanguage = new Language(languageName);
+            return languageRepository.save(newLanguage);
+        } else {
+            return existingLanguage;
+        }
+    }
+
     public Greeting getGreeting(long index) {
         Optional<Greeting> result = greetingRepository.findById(index);
 
