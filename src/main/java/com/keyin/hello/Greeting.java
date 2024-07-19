@@ -17,6 +17,14 @@ public class Greeting {
     @ManyToMany
     private List<Language> languages;
 
+    public Greeting() {}
+
+    public Greeting(String greeting, String name, List<Language> languages) {
+        this.greeting = greeting;
+        this.name = name;
+        this.languages = languages;
+    }
+
     public long getId() {
         return id;
     }

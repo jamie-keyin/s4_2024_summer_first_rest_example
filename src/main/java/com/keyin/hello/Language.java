@@ -15,8 +15,10 @@ public class Language {
     private long id;
     private String name;
 
-    public Language() {
-        this.name = "English";
+    public Language() {}
+
+    public Language(String name) {
+        this.name = name;
     }
 
     public long getId() {

@@ -1,4 +1,4 @@
-//GreetingService Mohamed
+// GreetingService.java
 package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +30,11 @@ public class GreetingService {
             Language english = languageRepository.findByName("English");
 
             if (english == null) {
-                english = new Language();
+                english = new Language("English");
                 languageRepository.save(english);
             }
 
-            ArrayList<Language> languageArrayList = new ArrayList<Language>();
+            ArrayList<Language> languageArrayList = new ArrayList<>();
             languageArrayList.add(english);
 
             newGreeting.setLanguages(languageArrayList);
@@ -55,21 +55,12 @@ public class GreetingService {
         return (List<Greeting>) greetingRepository.findAll();
     }
 
-    public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
+    public Greeting updateGreeting(Long index, Greeting updatedGreeting) {  // Changed Integer to Long to match the ID type in the entity
         Greeting greetingToUpdate = getGreeting(index);
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-
-        List<Language> languages = new ArrayList<>();
-        for (Language language : updatedGreeting.getLanguages()) {
-            Language langInDB = languageRepository.findByName(language.getName());
-            if (langInDB == null) {
-                langInDB = languageRepository.save(language);
-            }
-            languages.add(langInDB);
-        }
-        greetingToUpdate.setLanguages(languages);
+        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
 
         return greetingRepository.save(greetingToUpdate);
     }
@@ -81,4 +72,33 @@ public class GreetingService {
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
+
+    public void initializeGreetings() {
+        List<Language> languages = Arrays.asList(
+                new Language("English"),
+                new Language("French"),
+                new Language("Arabic"),
+                new Language("Dutch"),
+                new Language("Swedish")
+        );
+
+        for (Language language : languages) {
+            if (languageRepository.findByName(language.getName()) == null) {
+                languageRepository.save(language);
+            }
+        }
+
+        List<Greeting> greetings = Arrays.asList(
+                new Greeting("Hello", "Greeting1", Arrays.asList(languageRepository.findByName("English"))),
+                new Greeting("Bonjour", "Greeting2", Arrays.asList(languageRepository.findByName("French"))),
+                new Greeting("مرحبا", "Greeting3", Arrays.asList(languageRepository.findByName("Arabic"))),
+                new Greeting("Hallo", "Greeting4", Arrays.asList(languageRepository.findByName("Dutch"))),
+                new Greeting("Hej", "Greeting5", Arrays.asList(languageRepository.findByName("Swedish")))
+        );
+
+        for (Greeting greeting : greetings) {
+            createGreeting(greeting);
+        }
+    }
 }
+
