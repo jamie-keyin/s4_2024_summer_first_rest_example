@@ -14,7 +14,7 @@ public class Greeting {
     private String greeting;
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Language> languages;
 
     public long getId() {
