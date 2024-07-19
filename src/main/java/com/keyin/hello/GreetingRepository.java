@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface GreetingRepository extends CrudRepository<Greeting, Long>  {
-    public List<Greeting> findByNameAndGreeting(String name, String greetingName);
+    public Greeting findByNameAndGreeting(String name, String greetingName);
 }
