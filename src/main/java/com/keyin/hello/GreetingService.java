@@ -89,11 +89,11 @@ public class GreetingService {
         }
 
         List<Greeting> greetings = Arrays.asList(
-                new Greeting("Hello", "Greeting1", Arrays.asList(languageRepository.findByName("English"))),
-                new Greeting("Bonjour", "Greeting2", Arrays.asList(languageRepository.findByName("French"))),
-                new Greeting("مرحبا", "Greeting3", Arrays.asList(languageRepository.findByName("Arabic"))),
-                new Greeting("Hallo", "Greeting4", Arrays.asList(languageRepository.findByName("Dutch"))),
-                new Greeting("Hej", "Greeting5", Arrays.asList(languageRepository.findByName("Swedish")))
+                new Greeting("Hello", "Derrick", Arrays.asList(languageRepository.findByName("English"))),
+                new Greeting("Bonjour", "Natalie", Arrays.asList(languageRepository.findByName("French"))),
+                new Greeting("مرحبا", "Mohamed", Arrays.asList(languageRepository.findByName("Arabic"))),
+                new Greeting("Hallo", "Luca", Arrays.asList(languageRepository.findByName("Dutch"))),
+                new Greeting("Hej", "Arvid", Arrays.asList(languageRepository.findByName("Swedish")))
         );
 
         for (Greeting greeting : greetings) {
