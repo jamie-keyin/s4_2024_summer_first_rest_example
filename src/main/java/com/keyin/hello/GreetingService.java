@@ -59,6 +59,19 @@ public class GreetingService {
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
+
+        List<Language> languagesToAddToDB = new ArrayList<>();
+
+    for (Language language : updatedGreeting.getLanguages()) {
+        boolean checkLanguageInDB = checkIfLanguageInDB(language);
+        if (!checkLanguageInDB) {
+            languagesToAddToDB.add(language);
+        }
+    }
+
+    languagesToAddToDB.stream()
+                    .forEach(language -> languageRepository.save(language));
+
         greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
 
         return greetingRepository.save(greetingToUpdate);
@@ -71,4 +84,18 @@ public class GreetingService {
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
+
+
+    public boolean checkIfLanguageInDB(Language language) {
+
+       String languageName = language.getName();
+
+       if(languageRepository.findByName(languageName) == null) {
+           return false;
+       } else {
+           return true;
+       }
+    }
+
+
 }
