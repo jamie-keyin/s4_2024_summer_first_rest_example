@@ -25,6 +25,8 @@ public class GreetingService {
     }
 
     public Greeting createGreeting(Greeting newGreeting) {
+        newGreeting.setId(0);
+
         if (newGreeting.getLanguages() == null) {
             Language english = languageRepository.findByName("English");
 
@@ -38,13 +40,21 @@ public class GreetingService {
 
             newGreeting.setLanguages(languageArrayList);
         } else {
+            ArrayList<Language> languageArrayList = new ArrayList<Language>();
             for (Language language : newGreeting.getLanguages()) {
                 Language langInDB = languageRepository.findByName(language.getName());
 
                 if (langInDB == null) {
                     language = languageRepository.save(language);
+                    languageArrayList.add(language);
+                } else {
+                    language.setId(0);
+                    language = langInDB;
+                    languageArrayList.add(language);
                 }
+
             }
+            newGreeting.setLanguages(languageArrayList);
         }
 
         return greetingRepository.save(newGreeting);
@@ -59,7 +69,22 @@ public class GreetingService {
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+
+        ArrayList<Language> languageArrayList = new ArrayList<Language>();
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language langInDB = languageRepository.findByName(language.getName());
+
+            if (langInDB == null) {
+                language.setId(0);
+                language = languageRepository.save(language);
+                languageArrayList.add(language);
+            } else {
+                language = langInDB;
+                languageArrayList.add(language);
+            }
+        }
+
+        greetingToUpdate.setLanguages(languageArrayList);
 
         return greetingRepository.save(greetingToUpdate);
     }
