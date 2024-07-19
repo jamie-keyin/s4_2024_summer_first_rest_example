@@ -54,15 +54,39 @@ public class GreetingService {
         return (List<Greeting>) greetingRepository.findAll();
     }
 
-    public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
-        Greeting greetingToUpdate = getGreeting(index);
 
-        greetingToUpdate.setName(updatedGreeting.getName());
-        greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+    public Greeting updateGreeting(long index, Greeting updatedGreeting) {
+        // Check for greeting
+        Optional<Greeting> existingGreetingOptional = greetingRepository.findById(index);
+        Greeting updatingGreeting;
 
-        return greetingRepository.save(greetingToUpdate);
+        if (existingGreetingOptional.isPresent()) {
+            updatingGreeting = existingGreetingOptional.get();
+        } else {
+            // If it doesnt exist - create it
+            updatingGreeting = new Greeting();
+            updatingGreeting.setId(index); // new ID
+        }
+
+        // Updating basic fields
+        updatingGreeting.setName(updatedGreeting.getName());
+        updatingGreeting.setGreeting(updatedGreeting.getGreeting());
+
+        // Updating languages
+        List<Language> updatedLanguagesList = new ArrayList<>();
+
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language presentLanguage = languageRepository.findByName(language.getName());
+            if (presentLanguage == null) {
+                presentLanguage = languageRepository.save(language);
+            }
+            updatedLanguagesList.add(presentLanguage);
+        }
+        updatingGreeting.setLanguages(updatedLanguagesList);
+
+        return greetingRepository.save(updatingGreeting);
     }
+
 
     public void deleteGreeting(long index) {
         greetingRepository.delete(getGreeting(index));
@@ -71,4 +95,5 @@ public class GreetingService {
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
+
 }

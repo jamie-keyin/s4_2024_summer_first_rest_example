@@ -3,6 +3,7 @@ package com.keyin.hello;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,12 +35,13 @@ public class GreetingController {
     }
 
     @PutMapping("greeting/{index}")
-    public Greeting updateGreeting(@PathVariable Integer index, @RequestBody Greeting updatedGreeting) {
+    public Greeting updateGreeting(@PathVariable long index, @RequestBody Greeting updatedGreeting) {
         return greetingService.updateGreeting(index, updatedGreeting);
     }
 
-    @DeleteMapping("greeting/{index}")
-    public void deleteGreeting(@PathVariable Integer index) {
-        greetingService.deleteGreeting(index);
+
+        @DeleteMapping("greeting/{index}")
+        public void deleteGreeting (@PathVariable Integer index){
+            greetingService.deleteGreeting(index);
+        }
     }
-}
