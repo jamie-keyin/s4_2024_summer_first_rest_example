@@ -27,12 +27,12 @@ public class GreetingController {
         return greetingService.getGreeting(index);
     }
 
-    @PostMapping("greeting")
+    @PostMapping("/greeting")
     public Greeting createGreeting(@RequestBody Greeting newGreeting) {
         return greetingService.createGreeting(newGreeting);
     }
 
-    @PutMapping("greeting/{index}")
+    @PutMapping("/greeting/{index}")
     public Greeting updateGreeting(@PathVariable Long index, @RequestBody Greeting updatedGreeting) {  // Changed Integer to Long to match the ID type in the entity
         return greetingService.updateGreeting(index, updatedGreeting);
     }

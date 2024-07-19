@@ -55,12 +55,24 @@ public class GreetingService {
         return (List<Greeting>) greetingRepository.findAll();
     }
 
-    public Greeting updateGreeting(Long index, Greeting updatedGreeting) {  // Changed Integer to Long to match the ID type in the entity
+    public Greeting updateGreeting(Long index, Greeting updatedGreeting) {// Changed Integer to Long to match the ID type in the entity
+
         Greeting greetingToUpdate = getGreeting(index);
+
+
+        for(Language language: updatedGreeting.getLanguages()){
+            Language language1 = languageRepository.findByName(language.getName());
+            if(language1 == null){
+                language = languageRepository.save(language);
+            }
+        }
+
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
         greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+
+
 
         return greetingRepository.save(greetingToUpdate);
     }
@@ -73,32 +85,5 @@ public class GreetingService {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
 
-    public void initializeGreetings() {
-        List<Language> languages = Arrays.asList(
-                new Language("English"),
-                new Language("French"),
-                new Language("Arabic"),
-                new Language("Dutch"),
-                new Language("Swedish")
-        );
-
-        for (Language language : languages) {
-            if (languageRepository.findByName(language.getName()) == null) {
-                languageRepository.save(language);
-            }
-        }
-
-        List<Greeting> greetings = Arrays.asList(
-                new Greeting("Hello", "Derrick", Arrays.asList(languageRepository.findByName("English"))),
-                new Greeting("Bonjour", "Natalie", Arrays.asList(languageRepository.findByName("French"))),
-                new Greeting("مرحبا", "Mohamed", Arrays.asList(languageRepository.findByName("Arabic"))),
-                new Greeting("Hallo", "Luca", Arrays.asList(languageRepository.findByName("Dutch"))),
-                new Greeting("Hej", "Arvid", Arrays.asList(languageRepository.findByName("Swedish")))
-        );
-
-        for (Greeting greeting : greetings) {
-            createGreeting(greeting);
-        }
-    }
 }
 
