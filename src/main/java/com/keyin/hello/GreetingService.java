@@ -38,13 +38,16 @@ public class GreetingService {
 
             newGreeting.setLanguages(languageArrayList);
         } else {
+            ArrayList<Language> savedLanguages = new ArrayList<>();
             for (Language language : newGreeting.getLanguages()) {
                 Language langInDB = languageRepository.findByName(language.getName());
 
                 if (langInDB == null) {
                     language = languageRepository.save(language);
                 }
+                savedLanguages.add(langInDB);
             }
+            newGreeting.setLanguages(savedLanguages);
         }
 
         return greetingRepository.save(newGreeting);
@@ -57,9 +60,20 @@ public class GreetingService {
     public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
         Greeting greetingToUpdate = getGreeting(index);
 
+        ArrayList<Language> languages = new ArrayList<Language>();
+    
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language langInDB = languageRepository.findByName(language.getName());
+
+            if (langInDB == null) {
+                language = languageRepository.save(language);
+            }
+
+            languages.add(langInDB);
+        }
+        greetingToUpdate.setLanguages(languages);
 
         return greetingRepository.save(greetingToUpdate);
     }
