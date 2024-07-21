@@ -59,7 +59,20 @@ public class GreetingService {
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+
+        // Iterate across the list of languages provided in the updated greeting
+        List<Language> updatedGreetingLanguages = updatedGreeting.getLanguages();
+        if (!updatedGreetingLanguages.isEmpty()) {
+            for (Language language : updatedGreetingLanguages) {
+                Language languageInDB = languageRepository.findByName(language.getName());
+
+                // If the language does not exist in the database, add it
+                if (languageInDB == null)
+                    languageRepository.save(language);
+            }
+        }
+
+        greetingToUpdate.setLanguages(updatedGreetingLanguages);
 
         return greetingRepository.save(greetingToUpdate);
     }
