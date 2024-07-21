@@ -1,7 +1,5 @@
 package com.keyin.hello;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +12,8 @@ public class GreetingController {
     private GreetingService greetingService;
 
     @GetMapping("search_greeting")
-    public List<Greeting> searchGreeting(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "greeting", required = false) String greeting) {
+    public List<Greeting> searchGreeting(@RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "greeting", required = false) String greeting) {
         return greetingService.findGreetingsByNameAndGreeting(name, greeting);
     }
 
