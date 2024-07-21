@@ -54,15 +54,37 @@ public class GreetingService {
         return (List<Greeting>) greetingRepository.findAll();
     }
 
-    public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
-        Greeting greetingToUpdate = getGreeting(index);
+    public Greeting updateGreeting(long index, Greeting updatedGreeting) {
+        Optional<Greeting> optionalGreeting = greetingRepository.findById(index);
 
-        greetingToUpdate.setName(updatedGreeting.getName());
-        greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+        if (optionalGreeting.isEmpty()) {
+            throw new NoSuchElementException("Greeting with ID " + index + " not found.");
+        }
 
-        return greetingRepository.save(greetingToUpdate);
+        Greeting existingGreeting = optionalGreeting.get();
+
+        existingGreeting.setName(updatedGreeting.getName());
+        existingGreeting.setGreeting(updatedGreeting.getGreeting());
+
+        // Handle languages
+        List<Language> updatedLanguages = new ArrayList<>();
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language langInDB = languageRepository.findByName(language.getName());
+
+            if (langInDB == null) {
+                langInDB = languageRepository.save(language);
+            }
+            if (!updatedLanguages.contains(langInDB)) {
+                updatedLanguages.add(langInDB);
+            }
+        }
+
+        existingGreeting.setLanguages(updatedLanguages);
+
+        return greetingRepository.save(existingGreeting);
     }
+
+
 
     public void deleteGreeting(long index) {
         greetingRepository.delete(getGreeting(index));
