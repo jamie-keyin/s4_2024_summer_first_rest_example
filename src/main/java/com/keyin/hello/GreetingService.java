@@ -59,7 +59,16 @@ public class GreetingService {
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+
+        List<Language> updatedLanguages = new ArrayList<>();
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language langInDB = languageRepository.findByName(language.getName());
+            if (langInDB == null) {
+                langInDB = languageRepository.save(language);
+            }
+            updatedLanguages.add(langInDB);
+        }
+        greetingToUpdate.setLanguages(updatedLanguages);
 
         return greetingRepository.save(greetingToUpdate);
     }
