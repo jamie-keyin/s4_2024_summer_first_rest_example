@@ -71,4 +71,27 @@ public class GreetingService {
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
+
+    public Greeting addLanguageToGreeting(Long id, Language newLanguage) {
+        Optional<Greeting> greetingOptional = greetingRepository.findById(id);
+        if (greetingOptional.isPresent()) {
+            Greeting greetingToUpdate = greetingOptional.get();
+            List<Language> languages = greetingToUpdate.getLanguages();
+
+            Language existingLanguage = languageRepository.findByName(newLanguage.getName());
+            if (existingLanguage == null) {
+                existingLanguage = languageRepository.save(newLanguage);
+            }
+
+            if (!languages.contains(existingLanguage)) {
+                languages.add(existingLanguage);
+                greetingToUpdate.setLanguages(languages);
+                return greetingRepository.save(greetingToUpdate);
+            } else {
+                return greetingToUpdate;
+            }
+        }
+        return null;
+    }
+
 }
