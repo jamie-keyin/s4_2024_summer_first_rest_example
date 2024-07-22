@@ -64,7 +64,7 @@ public class GreetingService {
             greetingToUpdate = new Greeting();
             greetingToUpdate.setName(updatedGreeting.getName());
             greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-            greetingToUpdate.setLanguages(new ArrayList<>()); // Initialize languages list
+            greetingToUpdate.setLanguages(new ArrayList<>());
         }
 
         /* Checks to see if updatedLanguages isn't null, if it is, no languages to update.
