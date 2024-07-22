@@ -63,6 +63,26 @@ public class GreetingService {
 
         return greetingRepository.save(greetingToUpdate);
     }
+    public Greeting addLanguageToGreeting(Long index, Language newLanguage) {
+        Greeting greetingToUpdate = getGreeting(index);
+        if (greetingToUpdate == null) {
+            throw new NoSuchElementException("Greeting not found");
+        }
+
+        Language existingLanguage = languageRepository.findByName(newLanguage.getName());
+        if (existingLanguage == null) {
+            existingLanguage = languageRepository.save(newLanguage);
+        }
+
+        List<Language> languages = greetingToUpdate.getLanguages();
+        if (!languages.contains(existingLanguage)) {
+            languages.add(existingLanguage);
+            greetingToUpdate.setLanguages(languages);
+            return greetingRepository.save(greetingToUpdate);
+        }
+
+        return greetingToUpdate;
+    }
 
     public void deleteGreeting(long index) {
         greetingRepository.delete(getGreeting(index));
