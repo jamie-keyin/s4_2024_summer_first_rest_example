@@ -2,9 +2,10 @@ package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GreetingService {
@@ -54,12 +55,25 @@ public class GreetingService {
         return (List<Greeting>) greetingRepository.findAll();
     }
 
-    public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
+    public Greeting updateGreeting(Long index, Greeting updatedGreeting) {
         Greeting greetingToUpdate = getGreeting(index);
+
+        if (greetingToUpdate == null) {
+            return null;
+        }
 
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+
+        List<Language> updatedLanguages = new ArrayList<>();
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language existingLanguage = languageRepository.findByName(language.getName());
+            if (existingLanguage == null) {
+                existingLanguage = languageRepository.save(language);
+            }
+            updatedLanguages.add(existingLanguage);
+        }
+        greetingToUpdate.setLanguages(updatedLanguages);
 
         return greetingRepository.save(greetingToUpdate);
     }
@@ -72,3 +86,4 @@ public class GreetingService {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
 }
+
