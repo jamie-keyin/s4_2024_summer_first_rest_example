@@ -38,13 +38,19 @@ public class GreetingService {
 
             newGreeting.setLanguages(languageArrayList);
         } else {
+            List<Language> langsInDB = new ArrayList<Language>();
+
             for (Language language : newGreeting.getLanguages()) {
                 Language langInDB = languageRepository.findByName(language.getName());
 
                 if (langInDB == null) {
-                    language = languageRepository.save(language);
+                    langsInDB.add(languageRepository.save(language));
+                } else {
+                    langsInDB.add(langInDB);
                 }
             }
+
+            newGreeting.setLanguages(langsInDB);
         }
 
         return greetingRepository.save(newGreeting);
@@ -60,19 +66,24 @@ public class GreetingService {
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
 
-        // Iterate across the list of languages provided in the updated greeting
+
         List<Language> updatedGreetingLanguages = updatedGreeting.getLanguages();
+        List<Language> finalLanguages = new ArrayList<Language>();
+
+        // Iterate across the list of languages provided in the updated greeting
         if (!updatedGreetingLanguages.isEmpty()) {
             for (Language language : updatedGreetingLanguages) {
                 Language languageInDB = languageRepository.findByName(language.getName());
 
-                // If the language does not exist in the database, add it
+                // Add the language to the database if it does not already exist
                 if (languageInDB == null)
-                    languageRepository.save(language);
+                    finalLanguages.add(languageRepository.save(language));
+                else
+                    finalLanguages.add(languageInDB);
             }
         }
 
-        greetingToUpdate.setLanguages(updatedGreetingLanguages);
+        greetingToUpdate.setLanguages(finalLanguages);
 
         return greetingRepository.save(greetingToUpdate);
     }
