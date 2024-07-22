@@ -38,12 +38,6 @@ public class GreetingController {
         return greetingService.updateGreeting(index, updatedGreeting);
     }
 
-    @PutMapping("greeting/{id}/add-language")
-    public Greeting addLanguageToGreeting(@PathVariable Long id, @RequestBody Language newLanguage) {
-        return greetingService.addLanguageToGreeting(id, newLanguage);
-    }
-
-
     @DeleteMapping("greeting/{index}")
     public void deleteGreeting(@PathVariable Integer index) {
         greetingService.deleteGreeting(index);
