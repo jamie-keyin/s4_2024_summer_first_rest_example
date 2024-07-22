@@ -73,8 +73,18 @@ public class GreetingService {
 
         List<Language> updatedLanguages = updatedGreeting.getLanguages();
         List<Language> currLanguages = greetingToUpdate.getLanguages();
+
+        /* Code checks to see if updatedLanguages list from UpdatedGreeting is not null, determines whether there are new languages. */
         if (updatedLanguages != null) {
+            /* Loop to see if an existing language is in DB based on its identifier, if not found it is saved. */
             for (Language updatedLanguage : updatedLanguages) {
+                Language languageInDb = languageRepository.findById(updatedLanguage.getId())
+                        .orElseGet(() -> {
+                            return languageRepository.save(updatedLanguage);
+                        });
+
+                /* Checks to see if Language already exists in the list of languages, compares the names by ignoring the case. If it does
+                * not exist it is added, prevents duplicates. */
                 boolean languageExists = currLanguages.stream()
                         .anyMatch(l -> l.getName().equalsIgnoreCase(updatedLanguage.getName()));
                 if (!languageExists) {
@@ -83,8 +93,6 @@ public class GreetingService {
             }
         }
         greetingToUpdate.setLanguages(currLanguages);
-
-
         return greetingRepository.save(greetingToUpdate);
     }
 
