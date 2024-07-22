@@ -2,9 +2,10 @@ package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GreetingService {
@@ -16,12 +17,7 @@ public class GreetingService {
 
     public Greeting getGreeting(long index) {
         Optional<Greeting> result = greetingRepository.findById(index);
-
-        if (result.isPresent()) {
-            return result.get();
-        }
-
-        return null;
+        return result.orElse(null);
     }
 
     public Greeting createGreeting(Greeting newGreeting) {
@@ -33,7 +29,7 @@ public class GreetingService {
                 languageRepository.save(english);
             }
 
-            ArrayList<Language> languageArrayList = new ArrayList<Language>();
+            ArrayList<Language> languageArrayList = new ArrayList<>();
             languageArrayList.add(english);
 
             newGreeting.setLanguages(languageArrayList);
@@ -42,7 +38,7 @@ public class GreetingService {
                 Language langInDB = languageRepository.findByName(language.getName());
 
                 if (langInDB == null) {
-                    language = languageRepository.save(language);
+                    languageRepository.save(language);
                 }
             }
         }
@@ -71,4 +67,26 @@ public class GreetingService {
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
+
+    public Greeting addLanguages(Long id, List<Language> languages) {
+        Greeting greeting = greetingRepository.findById(id).orElseThrow(() -> new RuntimeException("Greeting not found"));
+
+        for (Language language : languages) {
+            Language existingLanguage = languageRepository.findByName(language.getName());
+            if (existingLanguage == null) {
+                language = languageRepository.save(language);
+            } else {
+                language = existingLanguage;
+            }
+            greeting.getLanguages().add(language);
+        }
+
+        return greetingRepository.save(greeting);
+    }
 }
+
+
+
+
+
+
