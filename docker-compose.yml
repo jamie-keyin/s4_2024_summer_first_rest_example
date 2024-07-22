@@ -1,0 +1,11 @@
+version: '3'
+services:
+  myapp-main:
+    image: greeting_api:latest
+    ports:
+      - 8080:8080
+    environment:
+      - spring.datasource.url=jdbc:mysql://host.docker.internal:3306/summer_QAP2_2024
+      #- spring.datasource.url=jdbc:mysql://s4-fall-2022.ce2vcezehro2.us-east-1.rds.amazonaws.com/fall_2022
+      - spring.datasource.password=RootPass123
+      - spring.datasource.username=root
