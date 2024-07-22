@@ -33,19 +33,13 @@ public class GreetingService {
                 languageRepository.save(english);
             }
 
-            ArrayList<Language> languageArrayList = new ArrayList<Language>();
-            languageArrayList.add(english);
+            ArrayList<Language> englishArrayList = new ArrayList<Language>();
+            englishArrayList.add(english);
 
-            newGreeting.setLanguages(languageArrayList);
+            newGreeting.setLanguages(englishArrayList);
         } else {
-            for (Language language : newGreeting.getLanguages()) {
-                Language langInDB = languageRepository.findByName(language.getName());
-
-                if (langInDB == null) {
-                    language = languageRepository.save(language);
-                }
-            }
-            newGreeting.setLanguages(newGreeting.getLanguages());
+            List<Language> languagesForNewGreeting = setLanguagesForGreeting(newGreeting);
+            newGreeting.setLanguages(languagesForNewGreeting);
         }
 
         return greetingRepository.save(newGreeting);
@@ -61,24 +55,8 @@ public class GreetingService {
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
 
-        List<Language> languagesToAddToDB = new ArrayList<>();
-        List<Language> allUpdatedLanguages = new ArrayList<>();
-
-    for (Language language : updatedGreeting.getLanguages()) {
-        boolean checkLanguageInDB = checkIfLanguageInDB(language);
-        if (!checkLanguageInDB) {
-            languagesToAddToDB.add(language);
-            allUpdatedLanguages.add(language);
-        } else {
-            allUpdatedLanguages.add(languageRepository.findByName(language.getName()));
-        }
-    }
-
-    languagesToAddToDB.stream()
-                    .forEach(language -> languageRepository.save(language));
-
-
-        greetingToUpdate.setLanguages(allUpdatedLanguages);
+        List<Language> updatedLanguagesList = setLanguagesForGreeting(updatedGreeting);
+        greetingToUpdate.setLanguages(updatedLanguagesList);
 
         return greetingRepository.save(greetingToUpdate);
     }
@@ -94,15 +72,38 @@ public class GreetingService {
 
     public boolean checkIfLanguageInDB(Language language) {
 
-       String languageName = language.getName();
+        String languageName = language.getName();
 
-       if(languageRepository.findByName(languageName) == null) {
-           return false;
-       } else {
-           return true;
-       }
+        if (languageRepository.findByName(languageName) == null) {
+            return false;
+        } else {
+            return true;
+        }
 
     }
+
+    public List<Language> setLanguagesForGreeting(Greeting greeting) {
+    List<Language> languagesToAddToDB = new ArrayList<>();
+    List<Language> allUpdatedLanguages = new ArrayList<>();
+
+    for(
+    Language language :greeting.getLanguages())
+
+    {
+        boolean checkLanguageInDB = checkIfLanguageInDB(language);
+        if (!checkLanguageInDB) {
+            languagesToAddToDB.add(language);
+            allUpdatedLanguages.add(language);
+        } else {
+            allUpdatedLanguages.add(languageRepository.findByName(language.getName()));
+        }
+    }
+
+    languagesToAddToDB.stream()
+            .forEach(language ->languageRepository.save(language));
+
+        return allUpdatedLanguages;
+}
 
 
 
