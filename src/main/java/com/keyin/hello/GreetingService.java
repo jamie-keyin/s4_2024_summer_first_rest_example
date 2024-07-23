@@ -2,10 +2,9 @@ package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GreetingService {
@@ -17,12 +16,41 @@ public class GreetingService {
 
     public Greeting getGreeting(long index) {
         Optional<Greeting> result = greetingRepository.findById(index);
-        return result.orElse(null);
+
+        if (result.isPresent()) {
+            return result.get();
+        }
+
+        return null;
     }
 
     public Greeting createGreeting(Greeting newGreeting) {
-        List<Language> languages = handleLanguages(newGreeting.getLanguages());
-        newGreeting.setLanguages(languages);
+        if (newGreeting.getLanguages() == null || newGreeting.getLanguages().isEmpty()) {
+            Language english = languageRepository.findByName("English");
+
+            if (english == null) {
+                english = new Language();
+                english.setName("English");
+                languageRepository.save(english);
+            }
+
+            ArrayList<Language> languageArrayList = new ArrayList<>();
+            languageArrayList.add(english);
+
+            newGreeting.setLanguages(languageArrayList);
+        } else {
+            List<Language> languages = new ArrayList<>();
+            for (Language language : newGreeting.getLanguages()) {
+                Language langInDB = languageRepository.findByName(language.getName());
+
+                if (langInDB == null) {
+                    language = languageRepository.save(language);
+                }
+                languages.add(language);
+            }
+            newGreeting.setLanguages(languages);
+        }
+
         return greetingRepository.save(newGreeting);
     }
 
@@ -40,46 +68,29 @@ public class GreetingService {
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
 
-        List<Language> updatedLanguages = handleLanguages(updatedGreeting.getLanguages());
+        List<Language> updatedLanguages = new ArrayList<>();
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language langInDB = languageRepository.findByName(language.getName());
+
+            if (langInDB == null) {
+                language = languageRepository.save(language);
+            } else {
+                language = langInDB;
+            }
+
+            updatedLanguages.add(language);
+        }
+
         greetingToUpdate.setLanguages(updatedLanguages);
 
         return greetingRepository.save(greetingToUpdate);
     }
 
     public void deleteGreeting(long index) {
-        Greeting greeting = getGreeting(index);
-        if (greeting != null) {
-            greetingRepository.delete(greeting);
-        }
+        greetingRepository.delete(getGreeting(index));
     }
 
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
-    }
-
-    private List<Language> handleLanguages(List<Language> languages) {
-        List<Language> languageList = new ArrayList<>();
-        if (languages == null || languages.isEmpty()) {
-            Language english = languageRepository.findByName("English");
-
-            if (english == null) {
-                english = new Language();
-                english.setName("English");
-                english = languageRepository.save(english);
-            }
-
-            languageList.add(english);
-        } else {
-            for (Language language : languages) {
-                Language langInDB = languageRepository.findByName(language.getName());
-
-                if (langInDB == null) {
-                    langInDB = languageRepository.save(language);
-                }
-
-                languageList.add(langInDB);
-            }
-        }
-        return languageList;
     }
 }
