@@ -68,6 +68,28 @@ public class GreetingService {
         greetingRepository.delete(getGreeting(index));
     }
 
+    public Greeting addLanguageToGreeting(long index, Language language) {
+        Optional<Greeting> greeting = greetingRepository.findById(index);
+        if (greeting.isPresent()) {
+            Greeting greetingToUpdate = greeting.get();
+            List<Language> languages = greetingToUpdate.getLanguages();
+            // Check if language is in the database:
+            Language langInDB = languageRepository.findByName(language.getName());
+            if (langInDB == null) {
+                langInDB = languageRepository.save(language);
+            }
+            // Add language to the greeting if none is present:
+            if (!languages.contains(langInDB)) {
+                languages.add(langInDB);
+                greetingToUpdate.setLanguages(languages);
+                return greetingRepository.save(greetingToUpdate);
+            } else {
+                return greetingToUpdate;
+            }
+        }
+        return null;
+    }
+
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
     }
