@@ -58,8 +58,8 @@ public class GreetingController implements Control {
      * @access  public
      */
     @PostMapping("/api/greetings")
-    public void add(@RequestBody GreetingEntity greeting) {
-        service.add(greeting);
+    public GreetingEntity add(@RequestBody GreetingEntity greeting) {
+        return service.add(greeting);
     }
     /**
      * @name    addLanguage
@@ -68,11 +68,11 @@ public class GreetingController implements Control {
      * @access  public
      */
     @PatchMapping("/api/greetings/{pk}")
-    public void addLanguage(
+    public GreetingEntity addLanguage(
         @PathVariable int pk,
         @RequestBody LanguageEntity language
     ) {
-        service.addLanguage(pk, language);
+        return service.addLanguage(pk, language);
     }
     /**
      * @name    edit
@@ -81,11 +81,11 @@ public class GreetingController implements Control {
      * @access  public
      */
     @PutMapping("/api/greetings/{pk}")
-    public void edit(
+    public GreetingEntity edit(
         @PathVariable int pk,
         @RequestBody GreetingEntity update
     ) {
-        service.edit(pk, update);
+        return service.edit(pk, update);
     }
     /**
      * @name    delete
@@ -95,7 +95,7 @@ public class GreetingController implements Control {
      */
     @Override
     @DeleteMapping("/api/greetings/{pk}")
-    public void delete(@PathVariable int pk) {
-        service.delete(pk);
+    public String delete(@PathVariable int pk) {
+        return service.delete(pk);
     }
 }

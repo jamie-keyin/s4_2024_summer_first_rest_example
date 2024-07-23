@@ -1,8 +1,10 @@
 package com.keyin.hynes.braden.s4qap2sdat.interfaces;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-@Controller
+import org.springframework.web.bind.annotation.RestController;
+@RestController
+@CrossOrigin
 public interface Control {
     @DeleteMapping
-    void delete(int pk);
+    String delete(int pk);
 }

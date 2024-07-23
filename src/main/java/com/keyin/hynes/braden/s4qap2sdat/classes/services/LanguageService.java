@@ -47,8 +47,8 @@ public final class LanguageService implements Serve {
      * @route   POST /api/languages
      * @access  public
      */
-    public void add(LanguageEntity language) {
-        repo.save(language);
+    public LanguageEntity add(LanguageEntity language) {
+        return repo.save(language);
     }
     /**
      * @name    edit
@@ -56,13 +56,13 @@ public final class LanguageService implements Serve {
      * @route   PUT /api/languages/:pk
      * @access  public
      */
-    public void edit(
+    public LanguageEntity edit(
         int pk,
         LanguageEntity update
     ) {
         this.current = repo.findById(pk).get();
         current.setName(update.getName());
-        repo.save(current);
+        return repo.save(current);
     }
     /**
      * @name    delete
@@ -71,7 +71,8 @@ public final class LanguageService implements Serve {
      * @access  public
      */
     @Override
-    public void delete(int pk) {
+    public String delete(int pk) {
         repo.deleteById(pk);
+        return "Language deleted.";
     }
 }

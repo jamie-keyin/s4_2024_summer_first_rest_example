@@ -53,8 +53,8 @@ public final class LanguageController implements Control {
      * @access  public
      */
     @PostMapping("/api/languages")
-    public void add(@RequestBody LanguageEntity language) {
-        service.add(language);
+    public LanguageEntity add(@RequestBody LanguageEntity language) {
+        return service.add(language);
     }
     /**
      * @name    edit
@@ -63,11 +63,11 @@ public final class LanguageController implements Control {
      * @access  public
      */
     @PutMapping("/api/languages/{pk}")
-    public void edit(
+    public LanguageEntity edit(
         @PathVariable int pk,
         @RequestBody LanguageEntity update
     ) {
-        service.edit(pk, update);
+        return service.edit(pk, update);
     }
     /**
      * @name    delete
@@ -77,7 +77,7 @@ public final class LanguageController implements Control {
      */
     @Override
     @DeleteMapping("/api/languages/{pk}")
-    public void delete(@PathVariable int pk) {
-        service.delete(pk);
+    public String delete(@PathVariable int pk) {
+        return service.delete(pk);
     }
 }

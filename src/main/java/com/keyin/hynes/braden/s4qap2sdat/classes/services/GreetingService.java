@@ -51,8 +51,8 @@ public final class GreetingService implements Serve {
      * @route   POST /api/greetings
      * @access  public
      */
-    public void add(GreetingEntity greeting) {
-        repo.save(greeting);
+    public GreetingEntity add(GreetingEntity greeting) {
+        return repo.save(greeting);
     }
     /**
      * @name    addLanguage
@@ -60,13 +60,13 @@ public final class GreetingService implements Serve {
      * @route   PATCH /api/language/:pk
      * @access  public
      */
-    public void addLanguage(
+    public GreetingEntity addLanguage(
         int pk,
         LanguageEntity language
     ) {
         this.current = repo.findById(pk).get();
         current.getLanguages().addLast(language);
-        repo.save(current);
+        return repo.save(current);
     }
     /**
      * @name    edit
@@ -74,7 +74,7 @@ public final class GreetingService implements Serve {
      * @route   PUT /api/greetings/:pk
      * @access  public
      */
-    public void edit(
+    public GreetingEntity edit(
         int pk,
         GreetingEntity update
     ) {
@@ -82,7 +82,7 @@ public final class GreetingService implements Serve {
         current.setName(update.getName());
         current.setGreeting(update.getGreeting());
         current.setLanguages(update.getLanguages());
-        repo.save(current);
+        return repo.save(current);
     }
     /**
      * @name    delete
@@ -91,7 +91,8 @@ public final class GreetingService implements Serve {
      * @access  public
      */
     @Override
-    public void delete(int pk) {
+    public String delete(int pk) {
         repo.deleteById(pk);
+        return "Greeting deleted.";
     }
 }
