@@ -25,26 +25,30 @@ public class GreetingService {
     }
 
     public Greeting createGreeting(Greeting newGreeting) {
-        if (newGreeting.getLanguages() == null) {
+        if (newGreeting.getLanguages() == null || newGreeting.getLanguages().isEmpty()) {
             Language english = languageRepository.findByName("English");
 
             if (english == null) {
                 english = new Language();
+                english.setName("English");
                 languageRepository.save(english);
             }
 
-            ArrayList<Language> languageArrayList = new ArrayList<Language>();
+            ArrayList<Language> languageArrayList = new ArrayList<>();
             languageArrayList.add(english);
 
             newGreeting.setLanguages(languageArrayList);
         } else {
+            List<Language> languages = new ArrayList<>();
             for (Language language : newGreeting.getLanguages()) {
                 Language langInDB = languageRepository.findByName(language.getName());
 
                 if (langInDB == null) {
                     language = languageRepository.save(language);
                 }
+                languages.add(language);
             }
+            newGreeting.setLanguages(languages);
         }
 
         return greetingRepository.save(newGreeting);
@@ -57,9 +61,27 @@ public class GreetingService {
     public Greeting updateGreeting(Integer index, Greeting updatedGreeting) {
         Greeting greetingToUpdate = getGreeting(index);
 
+        if (greetingToUpdate == null) {
+            throw new IllegalArgumentException("Greeting not found for index: " + index);
+        }
+
         greetingToUpdate.setName(updatedGreeting.getName());
         greetingToUpdate.setGreeting(updatedGreeting.getGreeting());
-        greetingToUpdate.setLanguages(updatedGreeting.getLanguages());
+
+        List<Language> updatedLanguages = new ArrayList<>();
+        for (Language language : updatedGreeting.getLanguages()) {
+            Language langInDB = languageRepository.findByName(language.getName());
+
+            if (langInDB == null) {
+                language = languageRepository.save(language);
+            } else {
+                language = langInDB;
+            }
+
+            updatedLanguages.add(language);
+        }
+
+        greetingToUpdate.setLanguages(updatedLanguages);
 
         return greetingRepository.save(greetingToUpdate);
     }
