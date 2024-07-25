@@ -1,8 +1,8 @@
 package com.keyin.hello;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +36,16 @@ public class GreetingController {
     @PutMapping("greeting/{index}")
     public Greeting updateGreeting(@PathVariable Integer index, @RequestBody Greeting updatedGreeting) {
         return greetingService.updateGreeting(index, updatedGreeting);
+    }
+
+    @PutMapping("greeting/{id}/addLanguage")
+    public ResponseEntity<?> addGreetingLang(@PathVariable long id, @RequestBody Language newLanguage) {
+        try {
+            Greeting updatedGreeting = greetingService.addGreetingLang(id, newLanguage);
+            return new ResponseEntity<>(updatedGreeting, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("greeting/{index}")
