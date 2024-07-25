@@ -2,7 +2,6 @@ package com.keyin.hello;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -70,5 +69,20 @@ public class GreetingService {
 
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
+    }
+
+    public Greeting addGreetingLang(long greetingId, Language newLanguage) {
+        Greeting greeting = greetingRepository.findById(greetingId)
+                .orElseThrow(() -> new IllegalArgumentException("Greeting not found"));
+
+        Language language = languageRepository.findByName(newLanguage.getName());
+        if (language == null) {
+            language = languageRepository.save(newLanguage);
+        } else if (greeting.getLanguages().contains(language)) {
+            throw new IllegalArgumentException("Language already exists for this greeting");
+        }
+
+        greeting.getLanguages().add(language);
+        return greetingRepository.save(greeting);
     }
 }
