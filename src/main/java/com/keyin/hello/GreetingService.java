@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 @Service
-public class GreetingService {
+public class  GreetingService {
     @Autowired
     private GreetingRepository greetingRepository;
 
@@ -70,5 +70,26 @@ public class GreetingService {
 
     public List<Greeting> findGreetingsByNameAndGreeting(String name, String greetingName) {
         return greetingRepository.findByNameAndGreeting(name, greetingName);
+    }
+
+    public Greeting addGreetingLanguage(Long index, Language newLanguage) {
+        Greeting greeting = getGreeting(index);
+        if (greeting == null) {
+            throw new NoSuchElementException("Greeting not found");
+        }
+
+        Language currentLanguage = languageRepository.findByName(newLanguage.getName());
+        if (currentLanguage == null) {
+            currentLanguage = languageRepository.save(newLanguage);
+        }
+
+        List<Language> listLanguages = greeting.getLanguages();
+        if (!listLanguages.contains(currentLanguage)) {
+            listLanguages.add(currentLanguage);
+            greeting.setLanguages(listLanguages);
+            return greetingRepository.save(greeting);
+        }
+
+        return greeting;
     }
 }
