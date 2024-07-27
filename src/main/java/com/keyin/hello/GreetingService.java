@@ -64,6 +64,39 @@ public class GreetingService {
         return greetingRepository.save(greetingToUpdate);
     }
 
+    public Greeting addNewLanguage(Long index, Language language) {
+
+        Optional<Greeting> greeting = greetingRepository.findById(index);
+
+        if (greeting.isPresent()) {
+
+            Greeting updateGreeting = greeting.get();
+            List<Language> languages = updateGreeting.getLanguages();
+
+
+            Language dbLang = languageRepository.findByName(language.getName());
+
+
+            if (dbLang == null) {
+                dbLang = languageRepository.save(language);
+            }
+
+
+            if (!languages.contains(dbLang)) {
+
+                languages.add(dbLang);
+                updateGreeting.setLanguages(languages);
+                return greetingRepository.save(updateGreeting);
+
+            } else {
+
+                return updateGreeting;
+            }
+        }
+
+        return null;
+    }
+
     public void deleteGreeting(long index) {
         greetingRepository.delete(getGreeting(index));
     }
