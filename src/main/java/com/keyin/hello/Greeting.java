@@ -1,20 +1,24 @@
 package com.keyin.hello;
 
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
 public class Greeting {
 
     @Id
-    @SequenceGenerator(name = "greeting_sequence", sequenceName = "greeting_sequence", allocationSize = 1, initialValue=1)
+    @SequenceGenerator(name = "greeting_sequence", sequenceName = "greeting_sequence", allocationSize = 1, initialValue = 1)
     @GeneratedValue(generator = "greeting_sequence")
     private long id;
     private String greeting;
     private String name;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "greeting_language",
+            joinColumns = @JoinColumn(name = "greeting_id"),
+            inverseJoinColumns = @JoinColumn(name = "language_id")
+    )
     private List<Language> languages;
 
     public long getId() {
@@ -49,3 +53,4 @@ public class Greeting {
         this.languages = languages;
     }
 }
+
